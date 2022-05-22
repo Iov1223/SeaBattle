@@ -17,40 +17,28 @@ void SetCursor(int x, int y) //функция для того чтобы устанавливать позицию курс
 	SetConsoleCursorPosition(hStdOut, myCoords); //Способ перемещения курсора на нужные координаты
 }
 
-void drawField(int mas[11][11], int x, int y) {
+void drawField(int mas[11][11]) {
 	char letter = 'A';
 	for (int i = 0; i < 11; i++) {
 		for (int j = 0; j < 11; j++) {
-			if (i == x && j == y && x == 0 && y == 0) {
+			if (j == 0 && i == 0) {
 				setColor(Blue, White);
 				cout << " ";
 			}
 			else
-				if (j == 0 && i == 0) {
+				if (i == 0) {
 					setColor(Blue, White);
-					cout << " ";
+					cout << " " << j;
 				}
 				else
-					if (i == 0) {
+					if (j == 0) {
 						setColor(Blue, White);
-						cout << " " << j;
+						cout << letter++ << " ";
 					}
-					else
-						if (j == 0) {
-							setColor(Blue, White);
-							cout << letter++ << " ";
-						}
-						else
-							if (i == x && j == y) {
-								setColor(LightGray, LightGray);
-								mas[x][y] == 0;
-								cout << mas[x][y] << " ";
-
-							}
-							else {
-								setColor(White, LightBlue);
-								cout << "_|";
-							}
+					else {
+						setColor(White, LightBlue);
+						cout << "_|";
+					}
 
 
 		}
@@ -75,18 +63,12 @@ int main() {
 
 	int const size = 11;
 	int field[size][size] = { 0 };
-	drawField(field, 0, 0);
+	drawField(field);
 	cout << "Arrange the ships:\n";
 	cin >> a >> b;
 	system("cls");
-	drawField(field, a, b);
-	short count = 0;
-	do {
-		cin >> a >> b;
-		drawField(field, a, b);
-		count++;
-	} while (count < 4);
-
+	
+	
 
 
 
