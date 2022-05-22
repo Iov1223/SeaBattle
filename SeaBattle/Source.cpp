@@ -4,20 +4,20 @@
 #include <time.h>
 using namespace std;
 
+// The enumeration of the colors used.
 enum Color { Black, Blue, Green, Cyan, Red, Magenta, Brown, LightGray, DarkGray, LightBlue = 9, LightGreen, LightCyan, LightRed, LightMagenta, Yellow, White };
 
-HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);  // Getting the output descriptor to the console
 
-void setColor(int text, int fon) { // Изменение текста и фона.
-	SetConsoleTextAttribute(hStdOut, (fon << 4) | text);
+void setColor(int text, int fon) { // Changing the text and background.
+	SetConsoleTextAttribute(hStdOut, (fon << 4) + text);
 }
-void SetCursor(int x, int y) //функция для того чтобы устанавливать позицию курсора в консоли по оси Х и Y
-{
+/*void setCursor(int x, int y) {
 	COORD myCoords = { x,y }; //инициализация координат
 	SetConsoleCursorPosition(hStdOut, myCoords); //Способ перемещения курсора на нужные координаты
-}
-
-void drawField(int mas[11][11]) {
+}*/
+// Drawing the user field
+void showField(int mas[11][11]) {
 	char letter = 'A';
 	for (int i = 0; i < 11; i++) {
 		for (int j = 0; j < 11; j++) {
@@ -37,44 +37,42 @@ void drawField(int mas[11][11]) {
 					}
 					else {
 						setColor(White, LightBlue);
-						cout << "_|";
+						cout << mas[i][j] << " ";//"_|"; 
 					}
-
-
 		}
 		setColor(White, Black);
 		cout << "\n";
 	}
 }
-/*void drawField(int mas[11][11], int x, int y) {
-	for (int i = 0; i < 11; i++) {
-		for (int j = 0; j < 11; j++) {
-			if (i == x && j == y)
-				cout << " #";
-			else
-				cout << " ";
-		}
-		cout << "\n";
+// Placement of ships
+void placementOfShips(int mas[11][11], int x, int y) {
+	setColor(LightGray, LightGray);
+	for (int i = 0; i < 2; i++) {
+		setColor(LightGray, LightGray);
+		mas[x][y] = 1;
+		y++;
 	}
-}*/
+	//setColor(White, Black);
+}
+
 
 int main() {
-	int a, b;
+	int a, b, n = 1;
 
 	int const size = 11;
-	int field[size][size] = { 0 };
-	drawField(field);
+	int field[size][size] = { };
+	
+	while (n <= 3) {
+		showField(field);
+		cout << "Arrange the ships:\n";
+		cin >> a >> b;
+		system("cls");
+		placementOfShips(field, a, b);
+		n++;
+	}
+	showField(field);
+	system("pause");
 	cout << "Arrange the ships:\n";
-	cin >> a >> b;
-	system("cls");
 	
-	
-
-
-
-
-
-
-
 	return 0;
 }
