@@ -37,42 +37,130 @@ void showField(int mas[11][11]) {
 					}
 					else {
 						setColor(White, LightBlue);
-						cout << mas[i][j] << " ";//"_|"; 
+						if (mas[i][j] == 0)
+							cout << "_|";
+						else {
+							setColor(Magenta, Magenta);
+							cout << "|" << mas[i][j];
+						}
 					}
 		}
 		setColor(White, Black);
 		cout << "\n";
 	}
 }
-// Placement of ships
-void placementOfShips(int mas[11][11], int x, int y) {
-	setColor(LightGray, LightGray);
-	for (int i = 0; i < 2; i++) {
-		setColor(LightGray, LightGray);
+// Hand placement of ships
+void placementOfShips(int mas[11][11], int x, int y, int n, int size) {
+	for (int i = 0; i < size; i++) {
 		mas[x][y] = 1;
-		y++;
+		if (n == 1)
+			x++;
+		else
+			y++;
 	}
-	//setColor(White, Black);
+}
+// Перевод буквы в цифру
+char transformation(char a) {
+	if (a == 'A' || a == 'a')
+		a = 1;
+	else
+		if (a == 'B' || a == 'b')
+			a = 2;
+		else
+			if (a == 'C' || a == 'c')
+				a = 3;
+			else
+				if (a == 'D' || a == 'd')
+					a = 4;
+				else
+					if (a == 'E' || a == 'e')
+						a = 5;
+					else
+						if (a == 'F' || a == 'f')
+							a = 6;
+						else
+							if (a == 'G' || a == 'g')
+								a = 7;
+							else
+								if (a == 'H' || a == 'h')
+									a = 8;
+								else
+									if (a == 'I' || a == 'i')
+										a = 9;
+									else
+										if (a == 'J' || a == 'j')
+											a = 10;
+	return a;
 }
 
-
 int main() {
-	int a, b, n = 1;
-
+	short coordShips = 3;
+	char coordX;
+	int  coordY, countShips = 0, aircraftCarrier = 4, cruiser = 3, destroyer = 2, sumbmarine = 1;
 	int const size = 11;
 	int field[size][size] = { };
-	
-	while (n <= 3) {
+
+
+	// Ручная расстановка кораблей пользователя
+	do {
 		showField(field);
-		cout << "Arrange the ships:\n";
-		cin >> a >> b;
+		cout << "!!!IMPORTANT!!!\nSHIPS ARE PLACED FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION OF THE SHIPS ( 0 = Horizontally, 1 = Vertically): ";
+		cin >> coordShips;
 		system("cls");
-		placementOfShips(field, a, b);
-		n++;
-	}
+	} while (coordShips < 0 || coordShips > 1);
 	showField(field);
-	system("pause");
-	cout << "Arrange the ships:\n";
+	cout << "PLACE AIRCRAFT CARRIER :\n";
+	cin >> coordX >> coordY;
+	system("cls");
+	placementOfShips(field, transformation(coordX), coordY, coordShips, aircraftCarrier);
+
+	do {
+		do {
+			showField(field);
+			cout << "!!!IMPORTANT!!!\nSHIPS ARE PLACED FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION OF THE SHIPS ( 0 = Horizontally, 1 = Vertically): ";
+			cin >> coordShips;
+			system("cls");
+		} while (coordShips < 0 || coordShips > 1);
+		showField(field);
+		cout << "PLACE CRUISER:\n";
+		cin >> coordX >> coordY;
+		system("cls");
+		placementOfShips(field, transformation(coordX), coordY, coordShips, cruiser);
+		countShips++;
+	} while (countShips < 2);
+	showField(field);
 	
+	do {
+		do {
+			showField(field);
+			cout << "!!!IMPORTANT!!!\nSHIPS ARE PLACED FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION OF THE SHIPS ( 0 = Horizontally, 1 = Vertically): ";
+			cin >> coordShips;
+			system("cls");
+		} while (coordShips < 0 || coordShips > 1);
+		showField(field);
+		cout << "PLACE DESTROYER:\n";
+		cin >> coordX >> coordY;
+		system("cls");
+		placementOfShips(field, transformation(coordX), coordY, coordShips, destroyer);
+		countShips++;
+	} while (countShips < 5);
+	showField(field);
+
+	do {
+		do {
+			showField(field);
+			cout << "!!!IMPORTANT!!!\nSHIPS ARE PLACED FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION OF THE SHIPS ( 0 = Horizontally, 1 = Vertically): ";
+			cin >> coordShips;
+			system("cls");
+		} while (coordShips < 0 || coordShips > 1);
+		showField(field);
+		cout << "PLACE SUBMARINE:\n";
+		cin >> coordX >> coordY;
+		system("cls");
+		placementOfShips(field, transformation(coordX), coordY, coordShips, sumbmarine);
+		countShips++;
+	} while (countShips < 10);
+	showField(field);
+
 	return 0;
 }
