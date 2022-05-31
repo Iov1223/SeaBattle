@@ -40,8 +40,8 @@ void showField(int mas[11][11]) {
 						if (mas[i][j] == 0)
 							cout << "_|";
 						else {
-							setColor(Magenta, Magenta);
-							cout << "|" << mas[i][j];
+							setColor(White, Magenta);
+							cout << mas[i][j] << "|";
 						}
 					}
 		}
@@ -93,20 +93,31 @@ char transformation(char a) {
 	return a;
 }
 // Проверка расстановки
-bool placeCheck(int mas[11][11], int x, int y) {
-	for (int i = 0; i < 11; i++) {
-		for (int j = 0; j < 11; j++)
-			if (mas[x][y] == 1) 
-				//mas[i][j] = mas[x][y];
-				return false;
-			else
-				return true;
-
+bool placeCheck(int mas[11][11], int x, int y, int n, int size) {
+	for (int i = 0; i < size; i++) {
+		if (n == 1)
+			x++;
+		else
+			y++;
 	}
+	for (int i = 0; i < 11; i++) {
+		if (x < 1 || y < 1 || x > 10 || y > 10 || mas[x][y] == 1 || mas[x + 1][y] == 1 || mas[x][y - 1] == 1 || mas[x - 1][y] == 1 || mas[x][y + 1] == 1 || mas[x + 1][y - 1] == 1 || mas[x - 1][y - 1] == 1 || mas[x - 1][y + 1] == 1 || mas[x + 1][y + 1] == 1)
+			return false;
+		else
+			return true;
+		
+	}
+	/*for (int i = 0; i < size; i++) {
+		if (mas[x][y] == 1 || mas[x + 1][y] == 1 || mas[x][y - 1] == 1 || mas[x - 1][y] == 1 || mas[x][y + 1] == 1 || mas[x + 1][y -  1] == 1 || mas[x - 1][y - 1] == 1 || mas[x - 1][y + 1] == 1 || mas[x + 1][y + 1] == 1)
+			return false;
+		else
+			return true;
+	}*/
+	
 }
 
 int main() {
-	short coordShips = 3;
+	short direction = 3;
 	char coordX;
 	int  coordY, countShips = 0, aircraftCarrier = 4, cruiser = 3, destroyer = 2, sumbmarine = 1, sumS = 1;
 	int const size = 11;
@@ -118,69 +129,74 @@ int main() {
 	do {
 		showField(field);
 		cout << "!!!IMPORTANT!!!\nSHIPS ARE PLACED FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 1 OF AIRCRAFT CARRIER ( 0 = Horizontally, 1 = Vertically): ";
-		cin >> coordShips;
+		cin >> direction;
 		system("cls");
-	} while (coordShips < 0 || coordShips > 1);
+	} while (direction < 0 || direction > 1);
 	showField(field);
-	cout << "PLACE AIRCRAFT CARRIER (1 оf 1) :\n";
-	cin >> coordX >> coordY;
+	do {
+		system("cls");
+		showField(field);
+		cout << "PLACE AIRCRAFT CARRIER (" << sumS << " of 1):\n";
+		cin >> coordX >> coordY;
+		if ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier) != true)) {
+			cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
+			system("pause");
+		}
+	} while ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier) != true));
+	placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier);
 	system("cls");
-	placementOfShips(field, transformation(coordX), coordY, coordShips, aircraftCarrier);
-
-	// Трёхпалубник
+	// 3 палубы
 	do {
 		do {
 			showField(field);
 			cout << "FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 2 OF THE CRUISERS ( 0 = Horizontally, 1 = Vertically): ";
-			cin >> coordShips;
+			cin >> direction;
 			system("cls");
-		} while (coordShips < 0 || coordShips > 1);
+		} while (direction < 0 || direction > 1);
 		showField(field);
 		do {
 			system("cls");
 			showField(field);
 			cout << "PLACE CRUISERS (" << sumS << " of 2):\n";
 			cin >> coordX >> coordY;
-			//placeCheck(field, transformation(coordX), coordY);
-			if ((placeCheck(field, transformation(coordX), coordY) != true)) {
-				cout << "THERE IS ALREADY THE SHIP HERE, REPEAT THE INPUT.\n";
+			if ((placeCheck(field, transformation(coordX), coordY, direction, cruiser) != true)) {
+				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 				system("pause");
 			}
-		} while ((placeCheck(field, transformation(coordX), coordY) != true));
-		placementOfShips(field, transformation(coordX), coordY, coordShips, cruiser);
+		} while ((placeCheck(field, transformation(coordX), coordY, direction, cruiser) != true));
+		placementOfShips(field, transformation(coordX), coordY, direction, cruiser);
 		countShips++;
 		sumS++;
 		system("cls");
 	} while (countShips < 2);
 	
-	// Двупаклубник
+	// 2 палубы
 	sumS = 1;
 	do {
 		do {
 			system("cls");
 			showField(field);
 			cout << "FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 3 OF THE DESTROYERS ( 0 = Horizontally, 1 = Vertically): ";
-			cin >> coordShips;
+			cin >> direction;
 			system("cls");
-		} while (coordShips < 0 || coordShips > 1);
+		} while (direction < 0 || direction > 1);
 		showField(field);
 		do {
 			system("cls");
 			showField(field);
 			cout << "PLACE DESTROYERS (" << sumS << " of 3):\n";
 			cin >> coordX >> coordY;
-			//placeCheck(field, transformation(coordX), coordY);
-			if ((placeCheck(field, transformation(coordX), coordY) != true)) {
-				cout << "THERE IS ALREADY THE SHIP HERE, REPEAT THE INPUT.\n";
+			if ((placeCheck(field, transformation(coordX), coordY, direction, destroyer) != true)) {
+				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 				system("pause");
 			}
-		} while ((placeCheck(field, transformation(coordX), coordY) != true));
-		placementOfShips(field, transformation(coordX), coordY, coordShips, destroyer);
+		} while ((placeCheck(field, transformation(coordX), coordY, direction, destroyer) != true));
+		placementOfShips(field, transformation(coordX), coordY, direction, destroyer);
 		countShips++;
 		sumS++;
 	} while (countShips < 5);
 
-	// Однопалубник
+	// 1 палуба
 	sumS = 1;
 	do {
 		do {
@@ -188,19 +204,17 @@ int main() {
 			showField(field);
 			cout << "PLACE SUBMARINES (" << sumS << " of 4):\n";
 			cin >> coordX >> coordY;
-			//placeCheck(field, transformation(coordX), coordY);
-			if ((placeCheck(field, transformation(coordX), coordY) != true)) {
-				cout << "THERE IS ALREADY THE SHIP HERE, REPEAT THE INPUT.\n";
+			if ((placeCheck(field, transformation(coordX), coordY, 0 , sumbmarine) != true)) {
+				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 				system("pause");
 			}
-		} while ((placeCheck(field, transformation(coordX), coordY) != true));
-		placementOfShips(field, transformation(coordX), coordY, coordShips, sumbmarine);
+		} while ((placeCheck(field, transformation(coordX), coordY, 0 , sumbmarine) != true));
+		placementOfShips(field, transformation(coordX), coordY, direction, sumbmarine);
 		countShips++;
 		sumS++;
 	} while (countShips < 9);
 	system("cls");
 	showField(field);
-
 
 	return 0;
 }
