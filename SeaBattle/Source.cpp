@@ -4,6 +4,7 @@
 #include <time.h>
 using namespace std;
 
+
 // The enumeration of the colors used.
 enum Color { Black, Blue, Green, Cyan, Red, Magenta, Brown, LightGray, DarkGray, LightBlue = 9, LightGreen, LightCyan, LightRed, LightMagenta, Yellow, White };
 
@@ -50,13 +51,12 @@ void showField(int mas[11][11]) {
 	}
 }
 // Hand placement of ships
-void placementOfShips(int mas[11][11], int x, int y, int n, int size) {
-	for (int i = 0; i < size; i++) {
-		mas[x][y] = 1;
-		if (n == 1)
-			x++;
+void placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
+	for (int i = 0; i < sizeShip; i++) {
+		if (dir == 1)
+			mas[x + i][y] = ship[i];
 		else
-			y++;
+			mas[x][y + i] = ship[i];
 	}
 }
 // Перевод буквы в цифру
@@ -93,37 +93,40 @@ char transformation(char a) {
 	return a;
 }
 // Проверка расстановки
-bool placeCheck(int mas[11][11], int x, int y, int n, int size) {
-	for (int i = 0; i < size; i++) {
-		if (n == 1)
-			x++;
-		else
-			y++;
-	}
-	for (int i = 0; i < 11; i++) {
-		if (x < 1 || y < 1 || x > 10 || y > 10 || mas[x][y] == 1 || mas[x + 1][y] == 1 || mas[x][y - 1] == 1 || mas[x - 1][y] == 1 || mas[x][y + 1] == 1 || mas[x + 1][y - 1] == 1 || mas[x - 1][y - 1] == 1 || mas[x - 1][y + 1] == 1 || mas[x + 1][y + 1] == 1)
+bool placeCheck(int mas[11][11], int x, int y, int size, int dir) {
+	if (x == 0 || y == 0)
+		return false;
+	if (dir == 1 && x + size > 11)
+		return false;
+	else
+		if (dir == 0 && y + size > 11)
 			return false;
-		else
-			return true;
-		
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++)
+			if (mas[x][y] == 1 ||
+				mas[x - 1][y] == 1 ||
+				mas[x + 1][y] == 1 ||
+				mas[x][y - 1] == 1 ||
+				mas[x][y + 1] == 1 ||
+				mas[x - 1][y - 1] == 1 ||
+				mas[x + 1][y + 1] == 1 ||
+				mas[x - 1][y + 1] == 1 ||
+				mas[x + 1][y - 1] == 1)
+				return false;
 	}
-	/*for (int i = 0; i < size; i++) {
-		if (mas[x][y] == 1 || mas[x + 1][y] == 1 || mas[x][y - 1] == 1 || mas[x - 1][y] == 1 || mas[x][y + 1] == 1 || mas[x + 1][y -  1] == 1 || mas[x - 1][y - 1] == 1 || mas[x - 1][y + 1] == 1 || mas[x + 1][y + 1] == 1)
-			return false;
-		else
-			return true;
-	}*/
-	
+	return true;
 }
+
 
 int main() {
 	short direction = 3;
 	char coordX;
-	int  coordY, countShips = 0, aircraftCarrier = 4, cruiser = 3, destroyer = 2, sumbmarine = 1, sumS = 1;
-	int const size = 11;
-	int field[size][size] = { };
-	
+	int  coordY, countShips = 0, sumS = 1;
+	int const size = 11, ac = 4, cr = 3, des = 2, sub = 1;
+	int aircraftCarrier[ac] = { 1, 1, 1, 1 }, cruiser[cr] = { 1, 1, 1 }, destroyer[des] = { 1, 1 }, submarine[sub] = { 1 };
+	int field[size][size] = { }, enemyField[size][size] = { };
 
+	
 	// Ручная расстановка кораблей пользователя
 	// 4 палубы
 	do {
@@ -138,12 +141,13 @@ int main() {
 		showField(field);
 		cout << "PLACE AIRCRAFT CARRIER (" << sumS << " of 1):\n";
 		cin >> coordX >> coordY;
-		if ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier) != true)) {
+		if ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false)) {
 			cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 			system("pause");
 		}
-	} while ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier) != true));
-	placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier);
+	} while ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false));
+	// placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip)
+	placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
 	system("cls");
 	// 3 палубы
 	do {
@@ -159,12 +163,12 @@ int main() {
 			showField(field);
 			cout << "PLACE CRUISERS (" << sumS << " of 2):\n";
 			cin >> coordX >> coordY;
-			if ((placeCheck(field, transformation(coordX), coordY, direction, cruiser) != true)) {
+			if ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false)) {
 				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 				system("pause");
 			}
-		} while ((placeCheck(field, transformation(coordX), coordY, direction, cruiser) != true));
-		placementOfShips(field, transformation(coordX), coordY, direction, cruiser);
+		} while ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false));
+		placementOfShips(field, transformation(coordX), coordY, direction, cruiser, cr);
 		countShips++;
 		sumS++;
 		system("cls");
@@ -186,12 +190,12 @@ int main() {
 			showField(field);
 			cout << "PLACE DESTROYERS (" << sumS << " of 3):\n";
 			cin >> coordX >> coordY;
-			if ((placeCheck(field, transformation(coordX), coordY, direction, destroyer) != true)) {
+			if ((placeCheck(field, transformation(coordX), coordY, des, direction) == false)) {
 				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 				system("pause");
 			}
-		} while ((placeCheck(field, transformation(coordX), coordY, direction, destroyer) != true));
-		placementOfShips(field, transformation(coordX), coordY, direction, destroyer);
+		} while ((placeCheck(field, transformation(coordX), coordY, des, direction) == false));
+		placementOfShips(field, transformation(coordX), coordY, direction, destroyer, des);
 		countShips++;
 		sumS++;
 	} while (countShips < 5);
@@ -204,12 +208,12 @@ int main() {
 			showField(field);
 			cout << "PLACE SUBMARINES (" << sumS << " of 4):\n";
 			cin >> coordX >> coordY;
-			if ((placeCheck(field, transformation(coordX), coordY, 0 , sumbmarine) != true)) {
+			if ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false)) {
 				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 				system("pause");
 			}
-		} while ((placeCheck(field, transformation(coordX), coordY, 0 , sumbmarine) != true));
-		placementOfShips(field, transformation(coordX), coordY, direction, sumbmarine);
+		} while ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false));
+		placementOfShips(field, transformation(coordX), coordY, direction, submarine, sub);
 		countShips++;
 		sumS++;
 	} while (countShips < 9);
