@@ -41,7 +41,7 @@ void showField(int mas[11][11]) {
 						if (mas[i][j] == 0)
 							cout << "_|";
 						else {
-							setColor(White, Magenta);
+							setColor(Magenta, Magenta);
 							cout << mas[i][j] << "|";
 						}
 					}
@@ -119,106 +119,206 @@ bool placeCheck(int mas[11][11], int x, int y, int size, int dir) {
 
 
 int main() {
+	srand(time(NULL));
+
 	short direction = 3;
 	char coordX;
-	int  coordY, countShips = 0, sumS = 1;
+	int  coordY, countShips = 0, sumS = 1, sw = 0;
 	int const size = 11, ac = 4, cr = 3, des = 2, sub = 1;
 	int aircraftCarrier[ac] = { 1, 1, 1, 1 }, cruiser[cr] = { 1, 1, 1 }, destroyer[des] = { 1, 1 }, submarine[sub] = { 1 };
 	int field[size][size] = { }, enemyField[size][size] = { };
 
-	
-	// Ручная расстановка кораблей пользователя
-	// 4 палубы
-	do {
-		showField(field);
-		cout << "!!!IMPORTANT!!!\nSHIPS ARE PLACED FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 1 OF AIRCRAFT CARRIER ( 0 = Horizontally, 1 = Vertically): ";
-		cin >> direction;
-		system("cls");
-	} while (direction < 0 || direction > 1);
-	showField(field);
 	do {
 		system("cls");
-		showField(field);
-		cout << "PLACE AIRCRAFT CARRIER (" << sumS << " of 1):\n";
-		cin >> coordX >> coordY;
-		if ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false)) {
-			cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
+		cout << "CHOOSING THE METHOD OF PLACING SHIPS:\n";
+		cout << "1. PLACEMENT IN AUTOMATIC MODE.\n";
+		cout << "2. PLACEMENT IN HAND MODE.\n";
+		cout << "3. ESCAPE.\n\n";
+		cout << "ENTER: ";
+		cin >> sw;
+
+		switch (sw) {
+		case 1:
+			// Автоматическая расстановка кораблей пользователя
+			// 4 палубы
+			do {
+				showField(field);
+				cout << "PLACEMENT IN THE PROCESS .\n";
+				direction = rand() % 2;
+			} while (direction < 0 || direction > 1);
+			do {
+				system("cls");
+				showField(field);
+				cout << "PLACEMENT IN THE PROCESS . .\n";
+				coordX = rand() % (11 - 1) + 1;
+				coordY = rand() % (11 - 1) + 1;
+			} while ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false));
+			placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
+			system("cls");
+
+			// 3 палубы
+			do {
+				do {
+					showField(field);
+					cout << "PLACEMENT IN THE PROCESS . . .\n";
+					direction = rand() % 2;
+				} while (direction < 0 || direction > 1);
+				do {
+					system("cls");
+					showField(field);
+					cout << "PLACEMENT IN THE PROCESS .\n";
+					coordX = rand() % (11 - 1) + 1;
+					coordY = rand() % (11 - 1) + 1;
+				} while ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false));
+				placementOfShips(field, transformation(coordX), coordY, direction, cruiser, cr);
+				countShips++;
+				sumS++;
+				system("cls");
+			} while (countShips < 2);
+
+			// 2 палубы
+			sumS = 1;
+			do {
+				do {
+					system("cls");
+					showField(field);
+					cout << "PLACEMENT IN THE PROCESS . .\n";
+					direction = rand() % 2;
+				} while (direction < 0 || direction > 1);
+				do {
+					system("cls");
+					showField(field);
+					cout << "PLACEMENT IN THE PROCESS . . .\n";
+					coordX = rand() % (11 - 1) + 1;
+					coordY = rand() % (11 - 1) + 1;
+				} while ((placeCheck(field, transformation(coordX), coordY, des, direction) == false));
+				placementOfShips(field, transformation(coordX), coordY, direction, destroyer, des);
+				countShips++;
+				sumS++;
+			} while (countShips < 5);
+
+			// 1 палуба
+			sumS = 1;
+			do {
+				do {
+					system("cls");
+					showField(field);
+					cout << "PLACEMENT IN THE PROCESS .\n";
+					coordX = rand() % (11 - 1) + 1;
+					coordY = rand() % (11 - 1) + 1;
+				} while ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false));
+				placementOfShips(field, transformation(coordX), coordY, direction, submarine, sub);
+				countShips++;
+				sumS++;
+			} while (countShips < 9);
+			system("cls");
+			showField(field);
+			cout << "EVERYTHING IS READY.\n";
 			system("pause");
+			system("cls");
+			break;
+
+		case 2:
+			// Ручная расстановка кораблей пользователя
+			// 4 палубы
+			system("cls");
+			do {
+				showField(field);
+				cout << "!!!IMPORTANT!!!\nSHIPS ARE PLACED FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 1 OF AIRCRAFT CARRIER ( 0 = Horizontally, 1 = Vertically): ";
+				cin >> direction;
+				system("cls");
+			} while (direction < 0 || direction > 1);
+			showField(field);
+			do {
+				system("cls");
+				showField(field);
+				cout << "PLACE AIRCRAFT CARRIER (" << sumS << " of 1):\n";
+				cin >> coordX >> coordY;
+				if ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false)) {
+					cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
+					system("pause");
+				}
+			} while ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false));
+			// placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip)
+			placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
+			system("cls");
+			// 3 палубы
+			do {
+				do {
+					showField(field);
+					cout << "FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 2 OF THE CRUISERS ( 0 = Horizontally, 1 = Vertically): ";
+					cin >> direction;
+					system("cls");
+				} while (direction < 0 || direction > 1);
+				showField(field);
+				do {
+					system("cls");
+					showField(field);
+					cout << "PLACE CRUISERS (" << sumS << " of 2):\n";
+					cin >> coordX >> coordY;
+					if ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false)) {
+						cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
+						system("pause");
+					}
+				} while ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false));
+				placementOfShips(field, transformation(coordX), coordY, direction, cruiser, cr);
+				countShips++;
+				sumS++;
+				system("cls");
+			} while (countShips < 2);
+
+			// 2 палубы
+			sumS = 1;
+			do {
+				do {
+					system("cls");
+					showField(field);
+					cout << "FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 3 OF THE DESTROYERS ( 0 = Horizontally, 1 = Vertically): ";
+					cin >> direction;
+					system("cls");
+				} while (direction < 0 || direction > 1);
+				showField(field);
+				do {
+					system("cls");
+					showField(field);
+					cout << "PLACE DESTROYERS (" << sumS << " of 3):\n";
+					cin >> coordX >> coordY;
+					if ((placeCheck(field, transformation(coordX), coordY, des, direction) == false)) {
+						cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
+						system("pause");
+					}
+				} while ((placeCheck(field, transformation(coordX), coordY, des, direction) == false));
+				placementOfShips(field, transformation(coordX), coordY, direction, destroyer, des);
+				countShips++;
+				sumS++;
+			} while (countShips < 5);
+
+			// 1 палуба
+			sumS = 1;
+			do {
+				do {
+					system("cls");
+					showField(field);
+					cout << "PLACE SUBMARINES (" << sumS << " of 4):\n";
+					cin >> coordX >> coordY;
+					if ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false)) {
+						cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
+						system("pause");
+					}
+				} while ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false));
+				placementOfShips(field, transformation(coordX), coordY, direction, submarine, sub);
+				countShips++;
+				sumS++;
+			} while (countShips < 9);
+			system("cls");
+			showField(field);
+			break;
+
+		case 3: cout << "WE FINISH WITHOUT STARTING!!!\n"; return 0;
 		}
-	} while ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false));
-	// placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip)
-	placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
-	system("cls");
-	// 3 палубы
-	do {
-		do {
-			showField(field);
-			cout << "FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 2 OF THE CRUISERS ( 0 = Horizontally, 1 = Vertically): ";
-			cin >> direction;
-			system("cls");
-		} while (direction < 0 || direction > 1);
-		showField(field);
-		do {
-			system("cls");
-			showField(field);
-			cout << "PLACE CRUISERS (" << sumS << " of 2):\n";
-			cin >> coordX >> coordY;
-			if ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false)) {
-				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
-				system("pause");
-			}
-		} while ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false));
-		placementOfShips(field, transformation(coordX), coordY, direction, cruiser, cr);
-		countShips++;
-		sumS++;
-		system("cls");
-	} while (countShips < 2);
-	
-	// 2 палубы
-	sumS = 1;
-	do {
-		do {
-			system("cls");
-			showField(field);
-			cout << "FROM LEFT TO RIGHT OR TOP TO BOTTOM\nLOCATION 3 OF THE DESTROYERS ( 0 = Horizontally, 1 = Vertically): ";
-			cin >> direction;
-			system("cls");
-		} while (direction < 0 || direction > 1);
-		showField(field);
-		do {
-			system("cls");
-			showField(field);
-			cout << "PLACE DESTROYERS (" << sumS << " of 3):\n";
-			cin >> coordX >> coordY;
-			if ((placeCheck(field, transformation(coordX), coordY, des, direction) == false)) {
-				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
-				system("pause");
-			}
-		} while ((placeCheck(field, transformation(coordX), coordY, des, direction) == false));
-		placementOfShips(field, transformation(coordX), coordY, direction, destroyer, des);
-		countShips++;
-		sumS++;
-	} while (countShips < 5);
+	} while (sw < 1 || sw > 3);
 
-	// 1 палуба
-	sumS = 1;
-	do {
-		do {
-			system("cls");
-			showField(field);
-			cout << "PLACE SUBMARINES (" << sumS << " of 4):\n";
-			cin >> coordX >> coordY;
-			if ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false)) {
-				cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
-				system("pause");
-			}
-		} while ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false));
-		placementOfShips(field, transformation(coordX), coordY, direction, submarine, sub);
-		countShips++;
-		sumS++;
-	} while (countShips < 9);
-	system("cls");
 	showField(field);
-
+	
 	return 0;
 }
