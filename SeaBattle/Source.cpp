@@ -17,6 +17,17 @@ void setColor(int text, int fon) { // Changing the text and background.
 	COORD myCoords = { x,y }; //инициализаци€ координат
 	SetConsoleCursorPosition(hStdOut, myCoords); //—пособ перемещени€ курсора на нужные координаты
 }*/
+
+void title() { // ¬ывод названи€ игры (заставка).
+	cout << " @@@@   @@@@@   @@@@       @@@@    @@@@   @@@@@@@  @@@@@@@  @      @@@@@\n";
+	cout << "@    @  @   @  @    @      @   @  @    @  @  @  @  @  @  @  @      @   @\n";
+	cout << "@       @      @    @      @   @  @    @     @        @     @      @\n";
+	cout << " @@@@   @@@@   @@@@@@      @@@@   @@@@@@     @        @     @      @@@@\n";
+	cout << "     @  @      @    @      @   @  @    @     @        @     @      @\n";
+	cout << "@    @  @   @  @    @      @   @  @    @     @        @     @   @  @   @\n";
+	cout << " @@@@   @@@@@  @    @      @@@@   @    @     @        @     @@@@@  @@@@@\n";
+	cout << "\n\n\n\t\t\tPRESS ANY KEY TO CONTINUE...\n";
+}
 // Drawing the user field
 void showField(int mas[11][11]) {
 	char letter = 'A';
@@ -41,7 +52,7 @@ void showField(int mas[11][11]) {
 						if (mas[i][j] == 0)
 							cout << "_|";
 						else {
-							setColor(Magenta, Magenta);
+							setColor(DarkGray, DarkGray);
 							cout << mas[i][j] << "|";
 						}
 					}
@@ -50,6 +61,40 @@ void showField(int mas[11][11]) {
 		cout << "\n";
 	}
 }
+// Drawing the bot field
+void showFieldEnemy(int mas[11][11]) {
+	char letter = 'A';
+	for (int i = 0; i < 11; i++) {
+		for (int j = 0; j < 11; j++) {
+			if (j == 0 && i == 0) {
+				setColor(White, LightRed);
+				cout << " ";
+			}
+			else
+				if (i == 0) {
+					setColor(White, LightRed);
+					cout << " " << j;
+				}
+				else
+					if (j == 0) {
+						setColor(White, LightRed);
+						cout << letter++ << " ";
+					}
+					else {
+						setColor(White, LightBlue);
+						if (mas[i][j] == 0)
+							cout << "_|";
+						else {
+							setColor(White, LightBlue);
+							cout << mas[i][j] << "|";
+						}
+					}
+		}
+		setColor(White, Black);
+		cout << "\n";
+	}
+}
+
 // Hand placement of ships
 void placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
 	for (int i = 0; i < sizeShip; i++) {
@@ -93,33 +138,72 @@ char transformation(char a) {
 	return a;
 }
 // ѕроверка расстановки
-bool placeCheck(int mas[11][11], int x, int y, int size, int dir) {
+bool placeCheck(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
 	if (x == 0 || y == 0)
 		return false;
-	if (dir == 1 && x + size > 11)
+	if (dir == 1 && x + sizeShip > 11)
 		return false;
 	else
-		if (dir == 0 && y + size > 11)
+		if (dir == 0 && y + sizeShip > 11)
 			return false;
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++)
-			if (mas[x][y] == 1 ||
-				mas[x - 1][y] == 1 ||
-				mas[x + 1][y] == 1 ||
-				mas[x][y - 1] == 1 ||
-				mas[x][y + 1] == 1 ||
-				mas[x - 1][y - 1] == 1 ||
-				mas[x + 1][y + 1] == 1 ||
-				mas[x - 1][y + 1] == 1 ||
-				mas[x + 1][y - 1] == 1)
-				return false;
-	}
+	if (mas[x][y] == 1 ||
+		mas[x - 1][y] == 1 ||
+		mas[x + 1][y] == 1 ||
+		mas[x][y - 1] == 1 ||
+		mas[x][y + 1] == 1 ||
+		mas[x - 1][y - 1] == 1 ||
+		mas[x + 1][y + 1] == 1 ||
+		mas[x - 1][y + 1] == 1 ||
+		mas[x + 1][y - 1] == 1 ||
+		mas[x - 1][y] == 1)
+		return false;
+	if (dir == 1)
+		x += (sizeShip - 1);
+	else
+		if (dir == 0)
+			y += (sizeShip - 1);
+	if (mas[x][y] == 1 ||
+		mas[x - 1][y] == 1 ||
+		mas[x + 1][y] == 1 ||
+		mas[x][y - 1] == 1 ||
+		mas[x][y + 1] == 1 ||
+		mas[x - 1][y - 1] == 1 ||
+		mas[x + 1][y + 1] == 1 ||
+		mas[x - 1][y + 1] == 1 ||
+		mas[x + 1][y - 1] == 1 ||
+		mas[x - 1][y] == 1)
+		return false;
+
 	return true;
 }
 
 
 int main() {
 	srand(time(NULL));
+	// Screensaver
+	bool n = false;
+	while (!n) {
+		setColor(3, 0);
+		title();
+		if (_kbhit())
+			n = true;
+		Sleep(1000);
+		system("cls");
+
+		setColor(4, 0);
+		title();
+		if (_kbhit())
+			n = true;
+		Sleep(1000);
+		system("cls");
+
+		setColor(15, 0);
+		title();
+		if (_kbhit())
+			n = true;
+		Sleep(1000);
+		system("cls");
+	}
 
 	short direction = 3;
 	char coordX;
@@ -152,7 +236,7 @@ int main() {
 				cout << "PLACEMENT IN THE PROCESS . .\n";
 				coordX = rand() % (11 - 1) + 1;
 				coordY = rand() % (11 - 1) + 1;
-			} while ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false));
+			} while ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier, ac) == false));
 			placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
 			system("cls");
 
@@ -169,7 +253,7 @@ int main() {
 					cout << "PLACEMENT IN THE PROCESS .\n";
 					coordX = rand() % (11 - 1) + 1;
 					coordY = rand() % (11 - 1) + 1;
-				} while ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false));
+				} while ((placeCheck(field, transformation(coordX), coordY, direction, cruiser, cr) == false));
 				placementOfShips(field, transformation(coordX), coordY, direction, cruiser, cr);
 				countShips++;
 				sumS++;
@@ -191,7 +275,7 @@ int main() {
 					cout << "PLACEMENT IN THE PROCESS . . .\n";
 					coordX = rand() % (11 - 1) + 1;
 					coordY = rand() % (11 - 1) + 1;
-				} while ((placeCheck(field, transformation(coordX), coordY, des, direction) == false));
+				} while ((placeCheck(field, transformation(coordX), coordY, direction, destroyer, des) == false));
 				placementOfShips(field, transformation(coordX), coordY, direction, destroyer, des);
 				countShips++;
 				sumS++;
@@ -202,11 +286,11 @@ int main() {
 			do {
 				do {
 					system("cls");
-					showField(field);
+					showField(field); 
 					cout << "PLACEMENT IN THE PROCESS .\n";
 					coordX = rand() % (11 - 1) + 1;
 					coordY = rand() % (11 - 1) + 1;
-				} while ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false));
+				} while ((placeCheck(field, transformation(coordX), coordY, 0, submarine, sub) == false));
 				placementOfShips(field, transformation(coordX), coordY, direction, submarine, sub);
 				countShips++;
 				sumS++;
@@ -234,12 +318,11 @@ int main() {
 				showField(field);
 				cout << "PLACE AIRCRAFT CARRIER (" << sumS << " of 1):\n";
 				cin >> coordX >> coordY;
-				if ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false)) {
+				if ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier, ac) == false)) {
 					cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 					system("pause");
 				}
-			} while ((placeCheck(field, transformation(coordX), coordY, ac, direction) == false));
-			// placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip)
+			} while ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier, ac) == false));
 			placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
 			system("cls");
 			// 3 палубы
@@ -256,11 +339,11 @@ int main() {
 					showField(field);
 					cout << "PLACE CRUISERS (" << sumS << " of 2):\n";
 					cin >> coordX >> coordY;
-					if ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false)) {
+					if ((placeCheck(field, transformation(coordX), coordY, direction, cruiser, cr) == false)) {
 						cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 						system("pause");
 					}
-				} while ((placeCheck(field, transformation(coordX), coordY, cr, direction) == false));
+				} while ((placeCheck(field, transformation(coordX), coordY, direction, cruiser, cr) == false));
 				placementOfShips(field, transformation(coordX), coordY, direction, cruiser, cr);
 				countShips++;
 				sumS++;
@@ -283,11 +366,11 @@ int main() {
 					showField(field);
 					cout << "PLACE DESTROYERS (" << sumS << " of 3):\n";
 					cin >> coordX >> coordY;
-					if ((placeCheck(field, transformation(coordX), coordY, des, direction) == false)) {
+					if ((placeCheck(field, transformation(coordX), coordY, direction, destroyer, des) == false)) {
 						cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 						system("pause");
 					}
-				} while ((placeCheck(field, transformation(coordX), coordY, des, direction) == false));
+				} while ((placeCheck(field, transformation(coordX), coordY, direction, destroyer, des) == false));
 				placementOfShips(field, transformation(coordX), coordY, direction, destroyer, des);
 				countShips++;
 				sumS++;
@@ -301,11 +384,11 @@ int main() {
 					showField(field);
 					cout << "PLACE SUBMARINES (" << sumS << " of 4):\n";
 					cin >> coordX >> coordY;
-					if ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false)) {
+					if ((placeCheck(field, transformation(coordX), coordY, 0, submarine, sub) == false)) {
 						cout << "IMPOSSIBLE TO PLACE THE SHIP, REPEAT THE INPUT.\n";
 						system("pause");
 					}
-				} while ((placeCheck(field, transformation(coordX), coordY, sub, 0) == false));
+				} while ((placeCheck(field, transformation(coordX), coordY, 0, submarine, sub) == false));
 				placementOfShips(field, transformation(coordX), coordY, direction, submarine, sub);
 				countShips++;
 				sumS++;
@@ -317,8 +400,85 @@ int main() {
 		case 3: cout << "WE FINISH WITHOUT STARTING!!!\n"; return 0;
 		}
 	} while (sw < 1 || sw > 3);
+	
 
-	showField(field);
+	// ѕоле противника
+	// 4 палубы
+	do {
+		showFieldEnemy(enemyField);
+		cout << "PLACEMENT IN THE PROCESS .\n";
+		direction = rand() % 2;
+	} while (direction < 0 || direction > 1);
+	do {
+		system("cls");
+		showFieldEnemy(enemyField);
+		cout << "PLACEMENT IN THE PROCESS . .\n";
+		coordX = rand() % (11 - 1) + 1;
+		coordY = rand() % (11 - 1) + 1;
+	} while ((placeCheck(enemyField, transformation(coordX), coordY, direction, aircraftCarrier, ac) == false));
+	placementOfShips(enemyField, transformation(coordX), coordY, direction, aircraftCarrier, ac);
+	system("cls");
+
+	// 3 палубы
+	do {
+		do {
+			showFieldEnemy(enemyField);
+			cout << "PLACEMENT IN THE PROCESS . . .\n";
+			direction = rand() % 2;
+		} while (direction < 0 || direction > 1);
+		do {
+			system("cls");
+			showFieldEnemy(enemyField);
+			cout << "PLACEMENT IN THE PROCESS .\n";
+			coordX = rand() % (11 - 1) + 1;
+			coordY = rand() % (11 - 1) + 1;
+		} while ((placeCheck(enemyField, transformation(coordX), coordY, direction, cruiser, cr) == false));
+		placementOfShips(enemyField, transformation(coordX), coordY, direction, cruiser, cr);
+		countShips++;
+		sumS++;
+		system("cls");
+	} while (countShips < 2);
+
+	// 2 палубы
+	sumS = 1;
+	do {
+		do {
+			system("cls");
+			showFieldEnemy(enemyField);
+			cout << "PLACEMENT IN THE PROCESS . .\n";
+			direction = rand() % 2;
+		} while (direction < 0 || direction > 1);
+		do {
+			system("cls");
+			showFieldEnemy(enemyField);
+			cout << "PLACEMENT IN THE PROCESS . . .\n";
+			coordX = rand() % (11 - 1) + 1;
+			coordY = rand() % (11 - 1) + 1;
+		} while ((placeCheck(enemyField, transformation(coordX), coordY, direction, destroyer, des) == false));
+		placementOfShips(enemyField, transformation(coordX), coordY, direction, destroyer, des);
+		countShips++;
+		sumS++;
+	} while (countShips < 5);
+
+	// 1 палуба
+	sumS = 1;
+	do {
+		do {
+			system("cls");
+			showFieldEnemy(enemyField);
+			cout << "PLACEMENT IN THE PROCESS .\n";
+			coordX = rand() % (11 - 1) + 1;
+			coordY = rand() % (11 - 1) + 1;
+		} while ((placeCheck(enemyField, transformation(coordX), coordY, 0, submarine, sub) == false));
+		placementOfShips(enemyField, transformation(coordX), coordY, direction, submarine, sub);
+		countShips++;
+		sumS++;
+	} while (countShips < 9);
+	system("cls");
+	showFieldEnemy(field);
+	cout << "EVERYTHING IS READY.\n";
+	system("pause");
+	system("cls");
 	
 	return 0;
 }
