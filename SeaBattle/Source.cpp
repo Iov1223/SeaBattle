@@ -30,6 +30,7 @@ void title() { // Вывод названия игры (заставка).
 }
 // Drawing the user field
 void showField(int mas[11][11]) {
+	cout << "      YOUR FIELD\n";
 	char letter = 'A';
 	for (int i = 0; i < 11; i++) {
 		for (int j = 0; j < 11; j++) {
@@ -52,7 +53,7 @@ void showField(int mas[11][11]) {
 						if (mas[i][j] == 0)
 							cout << "_|";
 						else {
-							setColor(DarkGray, DarkGray);
+							setColor(White, DarkGray);
 							cout << mas[i][j] << "|";
 						}
 					}
@@ -64,6 +65,7 @@ void showField(int mas[11][11]) {
 // Drawing the bot field
 void showFieldEnemy(int mas[11][11]) {
 	char letter = 'A';
+	cout << "      BOT FIELD\n";
 	for (int i = 0; i < 11; i++) {
 		for (int j = 0; j < 11; j++) {
 			if (j == 0 && i == 0) {
@@ -95,7 +97,7 @@ void showFieldEnemy(int mas[11][11]) {
 	}
 }
 
-// Hand placement of ships
+// Placement of ships
 void placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
 	for (int i = 0; i < sizeShip; i++) {
 		if (dir == 1)
@@ -177,12 +179,28 @@ bool placeCheck(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip
 	return true;
 }
 
+bool shot(int mas[11][11], int x, int y) {
+	if (mas[x][y] == 1) {
+		mas[x][y] = 2;
+		cout << "***YOU HIT THE BULL'S-EYE***\nTRY AGAIN:\n";
+		return true;
+	}
+	else
+		if (mas[x][y] == 0) {
+			cout << "~~~UH, NOT LUCK~~~\nTRY NEXT TIME.\n";
+			return false;
+		}
+		//else
+		//	if (mas[x][y] = 2) 
+			//	return true;
+}
+
 
 int main() {
 	srand(time(NULL));
 	// Screensaver
 	bool n = false;
-	while (!n) {
+	/*while (!n) {
 		setColor(3, 0);
 		title();
 		if (_kbhit())
@@ -198,16 +216,12 @@ int main() {
 		system("cls");
 
 		setColor(15, 0);
-		title();
-		if (_kbhit())
-			n = true;
-		Sleep(1000);
-		system("cls");
-	}
+	}*/
 
 	short direction = 3;
 	char coordX;
-	int  coordY, countShips = 0, sumS = 1, sw = 0;
+	short  coordY;
+	short countShips = 0, sumS = 1, sw = 0;
 	int const size = 11, ac = 4, cr = 3, des = 2, sub = 1;
 	int aircraftCarrier[ac] = { 1, 1, 1, 1 }, cruiser[cr] = { 1, 1, 1 }, destroyer[des] = { 1, 1 }, submarine[sub] = { 1 };
 	int field[size][size] = { }, enemyField[size][size] = { };
@@ -218,7 +232,7 @@ int main() {
 		cout << "1. PLACEMENT IN AUTOMATIC MODE.\n";
 		cout << "2. PLACEMENT IN HAND MODE.\n";
 		cout << "3. ESCAPE.\n\n";
-		cout << "ENTER: ";
+		cout << "INPUT: ";
 		cin >> sw;
 
 		switch (sw) {
@@ -286,7 +300,7 @@ int main() {
 			do {
 				do {
 					system("cls");
-					showField(field); 
+					showField(field);
 					cout << "PLACEMENT IN THE PROCESS .\n";
 					coordX = rand() % (11 - 1) + 1;
 					coordY = rand() % (11 - 1) + 1;
@@ -400,10 +414,11 @@ int main() {
 		case 3: cout << "WE FINISH WITHOUT STARTING!!!\n"; return 0;
 		}
 	} while (sw < 1 || sw > 3);
-	
+
 
 	// Поле противника
 	// 4 палубы
+	countShips = 0;
 	do {
 		showFieldEnemy(enemyField);
 		cout << "PLACEMENT IN THE PROCESS .\n";
@@ -475,10 +490,69 @@ int main() {
 		sumS++;
 	} while (countShips < 9);
 	system("cls");
-	showFieldEnemy(field);
-	cout << "EVERYTHING IS READY.\n";
-	system("pause");
-	system("cls");
-	
+	showField(field);
+	showFieldEnemy(enemyField);
+
+	short turn, user, H_T = rand() % (3 - 1) + 1;
+	cout << "EVERYTHING IS READY. YOU CAN START THE GAME!\n";
+	cout << "LET'S PLAY THE FIRST MOVE. GUESS HEADS OR TAILS.\n1. HEADS.\n2. TAILS.\n\INPUT: ";
+	cin >> user;
+	if (user != H_T) {
+		cout << "BOT MOVE.\n";
+		turn = 2;
+	}
+	else {
+		cout << "YOUR MOVE.\n";
+		turn = 1;
+	}
+
+	// Ход пользователя
+
+	/*n = false;
+	do {
+		cout << "INPUT LETTER (next press \"ENTER\"): ";
+		cin >> coordX;
+		cout << "INPUT NUMBER (next press \"ENTER\"): ";
+		cin >> coordY;
+		if (shot(enemyField, transformation(coordX), coordY) == true) {
+			//	cout << "***YOU HIT THE BULL'S-EYE***\nTRY AGAIN:\n";
+			system("pause");
+		}
+		else {
+			//cout << "~~~UH, NOT LUCK~~~\nTRY NEXT TIME.\n";
+			n = true;
+			system("pause");
+		}
+		system("cls");
+		showField(field);
+		showFieldEnemy(enemyField);
+	} while (n == false);*/
+
+
+	// Ход бота
+	do {
+		n = false;
+		do {
+			//int x = rand() % (char(75) - char(65)) + char(65);
+			coordX = rand() % (char(75) - char(65)) + char(65);
+			cout << "BOT INPUT LETTER: " << coordX << endl;
+			coordY = rand() % (11 - 1) + 1;
+			cout << "BOT INPUT NUMBER: " << coordY << endl;
+			system("pause");
+			if (shot(field, transformation(coordX), coordY) == true) {
+				//cout << "***YOU HIT THE BULL'S-EYE***\nTRY AGAIN:\n";
+				system("pause");
+			}
+			else {
+				//cout << "~~~UH, NOT LUCK~~~\nTRY NEXT TIME.\n";
+				n = true;
+				system("pause");
+			}
+			system("cls");
+			showField(field);
+			showFieldEnemy(enemyField);
+		} while (n != true);
+	} while (true);
+
 	return 0;
 }
