@@ -49,13 +49,25 @@ void showField(int mas[11][11]) {
 						cout << letter++ << " ";
 					}
 					else {
-						setColor(White, LightBlue);
-						if (mas[i][j] == 0)
-							cout << "_|";
-						else {
-							setColor(White, DarkGray);
-							cout << mas[i][j] << "|";
+						if (mas[i][j] == 2) {
+							setColor(White, Red);
+							cout << "* ";
 						}
+						else
+							if (mas[i][j] == 3) {
+								setColor(LightRed, LightGray);
+								cout << "* ";
+							}
+							else
+								if (mas[i][j] == 0) {
+									setColor(White, LightBlue);
+									cout << "_|";
+								}
+								else
+									if (mas[i][j] == 1) {
+										setColor(DarkGray, DarkGray);
+										cout << mas[i][j] << "|";
+									}
 					}
 		}
 		setColor(White, Black);
@@ -69,27 +81,40 @@ void showFieldEnemy(int mas[11][11]) {
 	for (int i = 0; i < 11; i++) {
 		for (int j = 0; j < 11; j++) {
 			if (j == 0 && i == 0) {
-				setColor(White, LightRed);
+				setColor(White, LightMagenta);
 				cout << " ";
 			}
 			else
 				if (i == 0) {
-					setColor(White, LightRed);
+					setColor(White, LightMagenta);
 					cout << " " << j;
 				}
 				else
 					if (j == 0) {
-						setColor(White, LightRed);
+						setColor(White, LightMagenta);
 						cout << letter++ << " ";
 					}
 					else {
-						setColor(White, LightBlue);
-						if (mas[i][j] == 0)
-							cout << "_|";
-						else {
-							setColor(White, LightBlue);
-							cout << mas[i][j] << "|";
+						if (mas[i][j] == 2) {
+							setColor(White, Red);
+							cout << "* ";
 						}
+						else
+							if (mas[i][j] == 3) {
+								setColor(LightRed, LightGray);
+								cout << "* ";
+							}
+							else
+								if (mas[i][j] == 0) {
+									setColor(White, LightBlue);
+									cout << "_|";
+								}
+								else
+									if (mas[i][j] == 1) {
+										setColor(White, LightBlue);
+										cout << mas[i][j] << "|";
+									}
+
 					}
 		}
 		setColor(White, Black);
@@ -187,15 +212,18 @@ bool shot(int mas[11][11], int x, int y) {
 	}
 	else
 		if (mas[x][y] == 0) {
-			mas[x][y] = 2;
+			mas[x][y] = 3;
 			cout << "\n~~~UH, NOT LUCK~~~\n\nTRY NEXT TIME.\n";
 			return false;
 		}
-	
-		else {
+
+		else
 			if (mas[x][y] = 2)
 				return true;
-		}
+			else
+				if (mas[x][y] = 3)
+					return true;
+		
 }
 
 
