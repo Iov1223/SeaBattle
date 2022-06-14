@@ -182,17 +182,20 @@ bool placeCheck(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip
 bool shot(int mas[11][11], int x, int y) {
 	if (mas[x][y] == 1) {
 		mas[x][y] = 2;
-		cout << "***YOU HIT THE BULL'S-EYE***\nTRY AGAIN:\n";
+		cout << "\n***YOU HIT THE BULL'S-EYE***\n\nTRY AGAIN:\n";
 		return true;
 	}
 	else
 		if (mas[x][y] == 0) {
-			cout << "~~~UH, NOT LUCK~~~\nTRY NEXT TIME.\n";
+			mas[x][y] = 2;
+			cout << "\n~~~UH, NOT LUCK~~~\n\nTRY NEXT TIME.\n";
 			return false;
 		}
-		//else
-		//	if (mas[x][y] = 2) 
-			//	return true;
+	
+		else {
+			if (mas[x][y] = 2)
+				return true;
+		}
 }
 
 
@@ -498,61 +501,67 @@ int main() {
 	cout << "LET'S PLAY THE FIRST MOVE. GUESS HEADS OR TAILS.\n1. HEADS.\n2. TAILS.\n\INPUT: ";
 	cin >> user;
 	if (user != H_T) {
-		cout << "BOT MOVE.\n";
+		cout << "\nBOT MOVE.\n\n";
 		turn = 2;
+		system("pause");
+		system("cls");
 	}
 	else {
-		cout << "YOUR MOVE.\n";
+		cout << "\nYOUR MOVE.\n\n";
 		turn = 1;
+		system("pause");
+		system("cls");
 	}
 
-	// Ход пользователя
+	showField(field);
+	showFieldEnemy(enemyField);
 
-	/*n = false;
-	do {
-		cout << "INPUT LETTER (next press \"ENTER\"): ";
-		cin >> coordX;
-		cout << "INPUT NUMBER (next press \"ENTER\"): ";
-		cin >> coordY;
-		if (shot(enemyField, transformation(coordX), coordY) == true) {
-			//	cout << "***YOU HIT THE BULL'S-EYE***\nTRY AGAIN:\n";
-			system("pause");
-		}
-		else {
-			//cout << "~~~UH, NOT LUCK~~~\nTRY NEXT TIME.\n";
-			n = true;
-			system("pause");
-		}
-		system("cls");
-		showField(field);
-		showFieldEnemy(enemyField);
-	} while (n == false);*/
-
-
-	// Ход бота
-	do {
-		n = false;
+	switch (turn) {
+		// Ход пользователя
+	case 1:
 		do {
-			//int x = rand() % (char(75) - char(65)) + char(65);
-			coordX = rand() % (char(75) - char(65)) + char(65);
-			cout << "BOT INPUT LETTER: " << coordX << endl;
-			coordY = rand() % (11 - 1) + 1;
-			cout << "BOT INPUT NUMBER: " << coordY << endl;
-			system("pause");
-			if (shot(field, transformation(coordX), coordY) == true) {
-				//cout << "***YOU HIT THE BULL'S-EYE***\nTRY AGAIN:\n";
-				system("pause");
-			}
-			else {
-				//cout << "~~~UH, NOT LUCK~~~\nTRY NEXT TIME.\n";
-				n = true;
-				system("pause");
-			}
-			system("cls");
-			showField(field);
-			showFieldEnemy(enemyField);
-		} while (n != true);
-	} while (true);
+			n = false;
+			do {
+				cout << "      YOUR MOVE.\n\n";
+				cout << "INPUT LETTER (next press \"ENTER\"): ";
+				cin >> coordX;
+				cout << "INPUT NUMBER (next press \"ENTER\"): ";
+				cin >> coordY;
+				if (shot(enemyField, transformation(coordX), coordY) == true) {
+					system("pause");
+				}
+				else {
+					n = true;
+					system("pause");
+				}
+				system("cls");
+				showField(field);
+				showFieldEnemy(enemyField);
+			} while (n == false);
 
+
+			// Ход бота
+	case 2:
+			n = false;
+			do {
+				cout << "      BOT MOVE.\n\n";
+				coordX = rand() % (char(75) - char(65)) + char(65);
+				cout << "BOT INPUT LETTER: " << coordX << endl;
+				coordY = rand() % (11 - 1) + 1;
+				cout << "BOT INPUT NUMBER: " << coordY << endl;
+				system("pause");
+				if (shot(field, transformation(coordX), coordY) == true) {
+					system("pause");
+				}
+				else {
+					n = true;
+					system("pause");
+				}
+				system("cls");
+				showField(field);
+				showFieldEnemy(enemyField);
+			} while (n == false);
+		} while (true);
+	}
 	return 0;
 }
