@@ -94,7 +94,7 @@ void showFieldEnemy(int mas[11][11]) {
 					else {
 						if (mas[i][j] == 2) {
 							setColor(White, Red);
-							cout << mas[i][j] << " ";//"* ";
+							cout << "* ";
 						}
 						else
 							if (mas[i][j] == 3) {
@@ -218,12 +218,6 @@ bool shot(int mas[11][11], int x, int y) {
 				return true;
 }
 //Cheking whether the ship is sunk
-void sunkShip(int mas[11][11], int arr1[], int size1, int x, int y) {
-	int count = 0;
-	if (mas[x][y] == 2)
-		arr1[0] = 2;
-	cout << "ghfghfgh " << arr1[0] << " " << arr1[1] << " " << arr1[2] << " " << arr1[3];
-}
 // Check for victory
 bool victoryCheck(int mas[11][11]) {
 	for (int i = 1; i < 11; i++) {
@@ -559,8 +553,6 @@ int main() {
 		do {
 			n = false;
 			do {
-				sunkShip(enemyField, aircraftCarrier, ac, transformation(coordX), coordY);
-				for (int i = 0; i < ac; i++)
 				if (victoryCheck(enemyField) == true) {
 					cout << "YEAH, DUDE. YEAH YOU ARE A REAL MAN:)\n      !!!YOU WON!!!\n\n";
 					system("pause");
@@ -582,9 +574,8 @@ int main() {
 				showField(field);
 				showFieldEnemy(enemyField);
 			} while (n == false);
-			if (victoryCheck(enemyField) == true)
+			if (victoryCheck(enemyField) == true) 
 				break;
-		
 
 		// ’од бота
 	case 2:
