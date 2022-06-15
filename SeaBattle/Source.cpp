@@ -10,14 +10,11 @@ enum Color { Black, Blue, Green, Cyan, Red, Magenta, Brown, LightGray, DarkGray,
 
 HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);  // Getting the output descriptor to the console
 
+// Color change
 void setColor(int text, int fon) { // Changing the text and background.
 	SetConsoleTextAttribute(hStdOut, (fon << 4) + text);
 }
-/*void setCursor(int x, int y) {
-	COORD myCoords = { x,y }; //инициализация координат
-	SetConsoleCursorPosition(hStdOut, myCoords); //Способ перемещения курсора на нужные координаты
-}*/
-
+// Splash screen output
 void title() { // Вывод названия игры (заставка).
 	cout << " @@@@   @@@@@   @@@@       @@@@    @@@@   @@@@@@@  @@@@@@@  @      @@@@@\n";
 	cout << "@    @  @   @  @    @      @   @  @    @  @  @  @  @  @  @  @      @   @\n";
@@ -97,7 +94,7 @@ void showFieldEnemy(int mas[11][11]) {
 					else {
 						if (mas[i][j] == 2) {
 							setColor(White, Red);
-							cout << "* ";
+							cout << mas[i][j] << " ";//"* ";
 						}
 						else
 							if (mas[i][j] == 3) {
@@ -121,7 +118,6 @@ void showFieldEnemy(int mas[11][11]) {
 		cout << "\n";
 	}
 }
-
 // Placement of ships
 void placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
 	for (int i = 0; i < sizeShip; i++) {
@@ -131,7 +127,7 @@ void placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int si
 			mas[x][y + i] = ship[i];
 	}
 }
-// Перевод буквы в цифру
+// Transformation of a letter into a number
 char transformation(char a) {
 	if (a == 'A' || a == 'a')
 		a = 1;
@@ -164,7 +160,7 @@ char transformation(char a) {
 											a = 10;
 	return a;
 }
-// Проверка расстановки
+// Checking placement of ships 
 bool placeCheck(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
 	if (x == 0 || y == 0)
 		return false;
@@ -203,7 +199,7 @@ bool placeCheck(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip
 
 	return true;
 }
-
+// Shots
 bool shot(int mas[11][11], int x, int y) {
 	if (mas[x][y] == 1) {
 		mas[x][y] = 2;
@@ -213,24 +209,36 @@ bool shot(int mas[11][11], int x, int y) {
 	else
 		if (mas[x][y] == 0) {
 			mas[x][y] = 3;
-			cout << "\n~~~UH, NOT LUCK~~~\n\nTRY NEXT TIME.\n";
+			cout << "\n~~~OOPS, NOT LUCK~~~\n\nTRY NEXT TIME.\n";
 			return false;
 		}
 
 		else
-			if (mas[x][y] = 2)
+			if (mas[x][y] == 2 || mas[x][y] == 3) // Cancels the shot if the shot is fired at a cell where it has already been fired.
 				return true;
-			else
-				if (mas[x][y] = 3)
-					return true;
-		
+}
+//Cheking whether the ship is sunk
+void sunkShip(int mas[11][11], int arr1[], int size1, int x, int y) {
+	int count = 0;
+	if (mas[x][y] == 2)
+		arr1[0] = 2;
+	cout << "ghfghfgh " << arr1[0] << " " << arr1[1] << " " << arr1[2] << " " << arr1[3];
+}
+// Check for victory
+bool victoryCheck(int mas[11][11]) {
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++)
+			if (mas[i][j] == 1)
+				return false;
+	}
+	return true;
 }
 
 
 int main() {
 	srand(time(NULL));
 	// Screensaver
-	bool n = false;
+	bool n = false, m = false;
 	/*while (!n) {
 		setColor(3, 0);
 		title();
@@ -524,6 +532,7 @@ int main() {
 	showField(field);
 	showFieldEnemy(enemyField);
 
+	// Who moves first
 	short turn, user, H_T = rand() % (3 - 1) + 1;
 	cout << "EVERYTHING IS READY. YOU CAN START THE GAME!\n";
 	cout << "LET'S PLAY THE FIRST MOVE. GUESS HEADS OR TAILS.\n1. HEADS.\n2. TAILS.\n\INPUT: ";
@@ -550,6 +559,13 @@ int main() {
 		do {
 			n = false;
 			do {
+				sunkShip(enemyField, aircraftCarrier, ac, transformation(coordX), coordY);
+				for (int i = 0; i < ac; i++)
+				if (victoryCheck(enemyField) == true) {
+					cout << "YEAH, DUDE. YEAH YOU ARE A REAL MAN:)\n      !!!YOU WON!!!\n\n";
+					system("pause");
+					break;
+				}
 				cout << "      YOUR MOVE.\n\n";
 				cout << "INPUT LETTER (next press \"ENTER\"): ";
 				cin >> coordX;
@@ -566,12 +582,19 @@ int main() {
 				showField(field);
 				showFieldEnemy(enemyField);
 			} while (n == false);
+			if (victoryCheck(enemyField) == true)
+				break;
+		
 
-
-			// Ход бота
+		// Ход бота
 	case 2:
 			n = false;
 			do {
+				if (victoryCheck(field) == true) {
+					cout << "WELL, WELL, WELL, HOW DID YOU MAKE SUCH A MISTAKE:(\n      !!!BOT WON!!!\n\n";
+					system("pause");
+					break;
+				}
 				cout << "      BOT MOVE.\n\n";
 				coordX = rand() % (char(75) - char(65)) + char(65);
 				cout << "BOT INPUT LETTER: " << coordX << endl;
@@ -589,7 +612,11 @@ int main() {
 				showField(field);
 				showFieldEnemy(enemyField);
 			} while (n == false);
+			if (victoryCheck(field) == true)
+				break;
 		} while (true);
 	}
+
+	cout << "THE END!";
 	return 0;
 }
