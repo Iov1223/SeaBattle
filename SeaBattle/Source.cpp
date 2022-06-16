@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <conio.h>
 #include <time.h>
+#include <string>
 using namespace std;
 
 
@@ -46,12 +47,12 @@ void showField(int mas[11][11]) {
 						cout << letter++ << " ";
 					}
 					else {
-						if (mas[i][j] == 2) {
+						if (mas[i][j] == 9) {
 							setColor(White, Red);
 							cout << "* ";
 						}
 						else
-							if (mas[i][j] == 3) {
+							if (mas[i][j] == 8) {
 								setColor(LightRed, LightGray);
 								cout << "* ";
 							}
@@ -61,7 +62,7 @@ void showField(int mas[11][11]) {
 									cout << "_|";
 								}
 								else
-									if (mas[i][j] == 1) {
+									if (mas[i][j] == 4 || mas[i][j] == 3 || mas[i][j] == 2 || mas[i][j] == 1) {
 										setColor(DarkGray, DarkGray);
 										cout << mas[i][j] << "|";
 									}
@@ -92,12 +93,12 @@ void showFieldEnemy(int mas[11][11]) {
 						cout << letter++ << " ";
 					}
 					else {
-						if (mas[i][j] == 2) {
+						if (mas[i][j] == 9) {
 							setColor(White, Red);
 							cout << "* ";
 						}
 						else
-							if (mas[i][j] == 3) {
+							if (mas[i][j] == 8) {
 								setColor(LightRed, LightGray);
 								cout << "* ";
 							}
@@ -107,7 +108,7 @@ void showFieldEnemy(int mas[11][11]) {
 									cout << "_|";
 								}
 								else
-									if (mas[i][j] == 1) {
+									if (mas[i][j] == 4 || mas[i][j] == 3 || mas[i][j] == 2 || mas[i][j] == 1) {
 										setColor(White, LightBlue);
 										cout << mas[i][j] << "|";
 									}
@@ -169,71 +170,147 @@ bool placeCheck(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip
 	else
 		if (dir == 0 && y + sizeShip > 11)
 			return false;
-	if (mas[x][y] == 1 ||
-		mas[x - 1][y] == 1 ||
-		mas[x + 1][y] == 1 ||
-		mas[x][y - 1] == 1 ||
-		mas[x][y + 1] == 1 ||
-		mas[x - 1][y - 1] == 1 ||
-		mas[x + 1][y + 1] == 1 ||
-		mas[x - 1][y + 1] == 1 ||
-		mas[x + 1][y - 1] == 1 ||
-		mas[x - 1][y] == 1)
+	if (mas[x][y] != 0 ||
+		mas[x - 1][y] != 0 ||
+		mas[x + 1][y] != 0 ||
+		mas[x][y - 1] != 0 ||
+		mas[x][y + 1] != 0 ||
+		mas[x - 1][y - 1] != 0 ||
+		mas[x + 1][y + 1] != 0 ||
+		mas[x - 1][y + 1] != 0 ||
+		mas[x + 1][y - 1] != 0 ||
+		mas[x - 1][y] != 0)
 		return false;
 	if (dir == 1)
 		x += (sizeShip - 1);
 	else
 		if (dir == 0)
 			y += (sizeShip - 1);
-	if (mas[x][y] == 1 ||
-		mas[x - 1][y] == 1 ||
-		mas[x + 1][y] == 1 ||
-		mas[x][y - 1] == 1 ||
-		mas[x][y + 1] == 1 ||
-		mas[x - 1][y - 1] == 1 ||
-		mas[x + 1][y + 1] == 1 ||
-		mas[x - 1][y + 1] == 1 ||
-		mas[x + 1][y - 1] == 1 ||
-		mas[x - 1][y] == 1)
+	if (mas[x][y] != 0 ||
+		mas[x - 1][y] != 0 ||
+		mas[x + 1][y] != 0 ||
+		mas[x][y - 1] != 0 ||
+		mas[x][y + 1] != 0 ||
+		mas[x - 1][y - 1] != 0 ||
+		mas[x + 1][y + 1] != 0 ||
+		mas[x - 1][y + 1] != 0 ||
+		mas[x + 1][y - 1] != 0 ||
+		mas[x - 1][y] != 0)
 		return false;
 
 	return true;
 }
 // Shots
 bool shot(int mas[11][11], int x, int y) {
-	if (mas[x][y] == 1) {
-		mas[x][y] = 2;
+	if (mas[x][y] == 4 || mas[x][y] == 3 || mas[x][y] == 2 || mas[x][y] == 1) {
+		mas[x][y] = 9;
 		cout << "\n***YOU HIT THE BULL'S-EYE***\n\nTRY AGAIN:\n";
 		return true;
 	}
 	else
 		if (mas[x][y] == 0) {
-			mas[x][y] = 3;
+			mas[x][y] = 8;
 			cout << "\n~~~OOPS, NOT LUCK~~~\n\nTRY NEXT TIME.\n";
 			return false;
 		}
 
 		else
-			if (mas[x][y] == 2 || mas[x][y] == 3) // Cancels the shot if the shot is fired at a cell where it has already been fired.
+			if (mas[x][y] == 8 || mas[x][y] == 9) // Cancels the shot if the shot is fired at a cell where it has already been fired.
 				return true;
 }
-//Cheking whether the ship is sunk
+//Cheking whether four-deck ship has been sunk
+string sunkAC(int mas[11][11]) {
+	int count = 0;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++)
+			if (mas[i][j] == 4)
+				count++;
+
+	}
+	if (count == 0)
+		return "THE SHIP IS FLOODED!";
+	return "1";
+}
+// Counting and checking of three-deck ships
+string sunkCR(int mas[11][11]) {
+	int count = 0;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++)
+			if (mas[i][j] == 3)
+				count++;
+
+	}
+	if (count == 6 || count > 3)
+		return "2";
+	if (count == 3 || count > 0)
+		return "1";
+	if (count == 0)
+		return "ALL THE SHIPS ARE FLOODED!";
+}
+// Counting and checking of doble-deck ships
+string sunkDES(int mas[11][11]) {
+	int count = 0;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++)
+			if (mas[i][j] == 2)
+				count++;
+
+	}
+	if (count == 6 || count == 5)
+		return "3";
+	if (count == 4 || count == 3)
+		return "2";
+	if (count == 2 || count == 1)
+		return "1";
+	if (count == 0)
+		return "ALL THE SHIPS ARE FLOODED!";
+}
+// Counting and checking of single-deck ships
+string sunkSUB(int mas[11][11]) {
+	int count = 0;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++)
+			if (mas[i][j] == 1)
+				count++;
+
+	}
+	if (count == 4)
+		return "4";
+	if (count == 3)
+		return "3";
+	if (count == 2)
+		return "2";
+	if (count == 1)
+		return "1";
+	if (count == 0)
+		return "ALL THE SHIPS ARE FLOODED!";
+}
 // Check for victory
 bool victoryCheck(int mas[11][11]) {
 	for (int i = 1; i < 11; i++) {
 		for (int j = 1; j < 11; j++)
-			if (mas[i][j] == 1)
+			if (mas[i][j] == 4 || mas[i][j] == 3 || mas[i][j] == 2 || mas[i][j] == 1)
 				return false;
 	}
 	return true;
 }
-
+// THE END
+void theEnd() { // ¬ывод названи€ игры (заставка).
+	cout << "@@@@@@@  @   @  @@@@@      @@@@@  @    @  @@@@    @\n";
+	cout << "@  @  @  @   @  @   @      @   @  @    @  @   @   @\n";
+	cout << "   @     @   @  @          @      @@   @  @    @  @\n";
+	cout << "   @     @@@@@  @@@@       @@@@   @ @  @  @    @  @\n";
+	cout << "   @     @   @  @          @      @  @ @  @    @  @\n";
+	cout << "   @     @   @  @   @      @   @  @   @@  @   @    \n";
+	cout << "   @     @   @  @@@@@      @@@@@  @    @  @@@@    @\n";
+	cout << "\n\n\t    PRESS ANY KEY TO CLOSE...\n";
+}
 
 int main() {
 	srand(time(NULL));
 	// Screensaver
 	bool n = false, m = false;
-	/*while (!n) {
+	while (!n) {
 		setColor(3, 0);
 		title();
 		if (_kbhit())
@@ -249,14 +326,14 @@ int main() {
 		system("cls");
 
 		setColor(15, 0);
-	}*/
+	}
 
 	short direction = 3;
 	char coordX;
 	short  coordY;
-	short countShips = 0, sumS = 1, sw = 0;
+	short countShips = 0, sumS = 1, sw = 0; //countShips - 
 	int const size = 11, ac = 4, cr = 3, des = 2, sub = 1;
-	int aircraftCarrier[ac] = { 1, 1, 1, 1 }, cruiser[cr] = { 1, 1, 1 }, destroyer[des] = { 1, 1 }, submarine[sub] = { 1 };
+	int aircraftCarrier[ac] = { 4, 4, 4, 4 }, cruiser[cr] = { 3, 3, 3 }, destroyer[des] = { 2, 2 }, submarine[sub] = { 1 };
 	int field[size][size] = { }, enemyField[size][size] = { };
 
 	do {
@@ -270,8 +347,8 @@ int main() {
 
 		switch (sw) {
 		case 1:
-			// јвтоматическа€ расстановка кораблей пользовател€
-			// 4 палубы
+			// Automatic placement of user ships
+			// four-deck ship
 			do {
 				showField(field);
 				cout << "PLACEMENT IN THE PROCESS .\n";
@@ -287,7 +364,7 @@ int main() {
 			placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
 			system("cls");
 
-			// 3 палубы
+			// three-deck ship
 			do {
 				do {
 					showField(field);
@@ -307,7 +384,7 @@ int main() {
 				system("cls");
 			} while (countShips < 2);
 
-			// 2 палубы
+			// double-deck ship
 			sumS = 1;
 			do {
 				do {
@@ -328,7 +405,7 @@ int main() {
 				sumS++;
 			} while (countShips < 5);
 
-			// 1 палуба
+			// single-deck ship
 			sumS = 1;
 			do {
 				do {
@@ -350,8 +427,8 @@ int main() {
 			break;
 
 		case 2:
-			// –учна€ расстановка кораблей пользовател€
-			// 4 палубы
+			// Manual placement of user ships
+			// four-deck ship
 			system("cls");
 			do {
 				showField(field);
@@ -372,7 +449,7 @@ int main() {
 			} while ((placeCheck(field, transformation(coordX), coordY, direction, aircraftCarrier, ac) == false));
 			placementOfShips(field, transformation(coordX), coordY, direction, aircraftCarrier, ac);
 			system("cls");
-			// 3 палубы
+			// three-deck ship
 			do {
 				do {
 					showField(field);
@@ -397,7 +474,7 @@ int main() {
 				system("cls");
 			} while (countShips < 2);
 
-			// 2 палубы
+			// doble-deck ship
 			sumS = 1;
 			do {
 				do {
@@ -423,7 +500,7 @@ int main() {
 				sumS++;
 			} while (countShips < 5);
 
-			// 1 палуба
+			// single-deck ship
 			sumS = 1;
 			do {
 				do {
@@ -449,8 +526,8 @@ int main() {
 	} while (sw < 1 || sw > 3);
 
 
-	// ѕоле противника
-	// 4 палубы
+	// Fild of enemy
+	// four-deck ship
 	countShips = 0;
 	do {
 		showFieldEnemy(enemyField);
@@ -467,7 +544,7 @@ int main() {
 	placementOfShips(enemyField, transformation(coordX), coordY, direction, aircraftCarrier, ac);
 	system("cls");
 
-	// 3 палубы
+	// three-deck ship
 	do {
 		do {
 			showFieldEnemy(enemyField);
@@ -487,7 +564,7 @@ int main() {
 		system("cls");
 	} while (countShips < 2);
 
-	// 2 палубы
+	// doble-deck ship
 	sumS = 1;
 	do {
 		do {
@@ -508,7 +585,7 @@ int main() {
 		sumS++;
 	} while (countShips < 5);
 
-	// 1 палуба
+	// single-deck ship
 	sumS = 1;
 	do {
 		do {
@@ -548,7 +625,7 @@ int main() {
 	showFieldEnemy(enemyField);
 
 	switch (turn) {
-		// ’од пользовател€
+    // user's move
 	case 1:
 		do {
 			n = false;
@@ -558,7 +635,12 @@ int main() {
 					system("pause");
 					break;
 				}
-				cout << "      YOUR MOVE.\n\n";
+				cout << "      BOT SHIPS:\n";
+				cout << "AIRCRAFT CARRIER: " << sunkAC(enemyField) << "\n";
+				cout << "CRUISERS: " << sunkCR(enemyField) << "\n";
+				cout << "DESTROYERS: " << sunkDES(enemyField) << "\n";
+				cout << "SUBMARINES: " << sunkSUB(enemyField) << "\n\n";
+				cout << "      YOUR MOVE.\n";
 				cout << "INPUT LETTER (next press \"ENTER\"): ";
 				cin >> coordX;
 				cout << "INPUT NUMBER (next press \"ENTER\"): ";
@@ -577,7 +659,7 @@ int main() {
 			if (victoryCheck(enemyField) == true) 
 				break;
 
-		// ’од бота
+    // bot's move
 	case 2:
 			n = false;
 			do {
@@ -586,6 +668,11 @@ int main() {
 					system("pause");
 					break;
 				}
+				cout << "      YOUR SHIPS:\n";
+				cout << "AIRCRAFT CARRIER: " << sunkAC(field) << "\n";
+				cout << "CRUISERS: " << sunkCR(field) << "\n";
+				cout << "DESTROYERS: " << sunkDES(field) << "\n";
+				cout << "SUBMARINES: " << sunkSUB(field) << "\n\n";
 				cout << "      BOT MOVE.\n\n";
 				coordX = rand() % (char(75) - char(65)) + char(65);
 				cout << "BOT INPUT LETTER: " << coordX << endl;
@@ -607,7 +694,25 @@ int main() {
 				break;
 		} while (true);
 	}
+	// the end
+	n = false;
+	while (!n) {
+		setColor(Yellow, Black);
+		theEnd();
+		if (_kbhit())
+			n = true;
+		Sleep(1000);
+		system("cls");
 
-	cout << "THE END!";
+		setColor(LightCyan, Black);
+		theEnd();
+		if (_kbhit())
+			n = true;
+		Sleep(1000);
+		system("cls");
+
+		setColor(White, Black);
+	}
+
 	return 0;
 }
