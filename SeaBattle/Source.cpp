@@ -1,310 +1,10 @@
+#include "SeaBattle.h"
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include <time.h>
-#include <string>
 using namespace std;
 
 
-// The enumeration of the colors used.
-enum Color { Black, Blue, Green, Cyan, Red, Magenta, Brown, LightGray, DarkGray, LightBlue = 9, LightGreen, LightCyan, LightRed, LightMagenta, Yellow, White };
-
-HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);  // Getting the output descriptor to the console
-
-// Color change
-void setColor(int text, int fon) { // Changing the text and background.
-	SetConsoleTextAttribute(hStdOut, (fon << 4) + text);
-}
-// Splash screen output
-void title() { // Вывод названия игры (заставка).
-	cout << " @@@@   @@@@@   @@@@       @@@@    @@@@   @@@@@@@  @@@@@@@  @      @@@@@\n";
-	cout << "@    @  @   @  @    @      @   @  @    @  @  @  @  @  @  @  @      @   @\n";
-	cout << "@       @      @    @      @   @  @    @     @        @     @      @\n";
-	cout << " @@@@   @@@@   @@@@@@      @@@@   @@@@@@     @        @     @      @@@@\n";
-	cout << "     @  @      @    @      @   @  @    @     @        @     @      @\n";
-	cout << "@    @  @   @  @    @      @   @  @    @     @        @     @   @  @   @\n";
-	cout << " @@@@   @@@@@  @    @      @@@@   @    @     @        @     @@@@@  @@@@@\n";
-	cout << "\n\n\n\t\t\tPRESS ANY KEY TO CONTINUE...\n";
-}
-// Drawing the user field
-void showField(int mas[11][11]) {
-	cout << "      YOUR FIELD\n";
-	char letter = 'A';
-	for (int i = 0; i < 11; i++) {
-		for (int j = 0; j < 11; j++) {
-			if (j == 0 && i == 0) {
-				setColor(Blue, White);
-				cout << " ";
-			}
-			else
-				if (i == 0) {
-					setColor(Blue, White);
-					cout << " " << j;
-				}
-				else
-					if (j == 0) {
-						setColor(Blue, White);
-						cout << letter++ << " ";
-					}
-					else {
-						if (mas[i][j] == 9) {
-							setColor(White, Red);
-							cout << "* ";
-						}
-						else
-							if (mas[i][j] == 8) {
-								setColor(LightRed, LightGray);
-								cout << "* ";
-							}
-							else
-								if (mas[i][j] == 0) {
-									setColor(White, LightBlue);
-									cout << "_|";
-								}
-								else
-									if (mas[i][j] == 4 || mas[i][j] == 3 || mas[i][j] == 2 || mas[i][j] == 1) {
-										setColor(DarkGray, DarkGray);
-										cout << mas[i][j] << "|";
-									}
-					}
-		}
-		setColor(White, Black);
-		cout << "\n";
-	}
-}
-// Drawing the bot field
-void showFieldEnemy(int mas[11][11]) {
-	char letter = 'A';
-	cout << "      BOT FIELD\n";
-	for (int i = 0; i < 11; i++) {
-		for (int j = 0; j < 11; j++) {
-			if (j == 0 && i == 0) {
-				setColor(White, LightMagenta);
-				cout << " ";
-			}
-			else
-				if (i == 0) {
-					setColor(White, LightMagenta);
-					cout << " " << j;
-				}
-				else
-					if (j == 0) {
-						setColor(White, LightMagenta);
-						cout << letter++ << " ";
-					}
-					else {
-						if (mas[i][j] == 9) {
-							setColor(White, Red);
-							cout << "* ";
-						}
-						else
-							if (mas[i][j] == 8) {
-								setColor(LightRed, LightGray);
-								cout << "* ";
-							}
-							else
-								if (mas[i][j] == 0) {
-									setColor(White, LightBlue);
-									cout << "_|";
-								}
-								else
-									if (mas[i][j] == 4 || mas[i][j] == 3 || mas[i][j] == 2 || mas[i][j] == 1) {
-										setColor(White, LightBlue);
-										cout << mas[i][j] << "|";
-									}
-
-					}
-		}
-		setColor(White, Black);
-		cout << "\n";
-	}
-}
-// Placement of ships
-void placementOfShips(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
-	for (int i = 0; i < sizeShip; i++) {
-		if (dir == 1)
-			mas[x + i][y] = ship[i];
-		else
-			mas[x][y + i] = ship[i];
-	}
-}
-// Transformation of a letter into a number
-char transformation(char a) {
-	if (a == 'A' || a == 'a')
-		a = 1;
-	else
-		if (a == 'B' || a == 'b')
-			a = 2;
-		else
-			if (a == 'C' || a == 'c')
-				a = 3;
-			else
-				if (a == 'D' || a == 'd')
-					a = 4;
-				else
-					if (a == 'E' || a == 'e')
-						a = 5;
-					else
-						if (a == 'F' || a == 'f')
-							a = 6;
-						else
-							if (a == 'G' || a == 'g')
-								a = 7;
-							else
-								if (a == 'H' || a == 'h')
-									a = 8;
-								else
-									if (a == 'I' || a == 'i')
-										a = 9;
-									else
-										if (a == 'J' || a == 'j')
-											a = 10;
-	return a;
-}
-// Checking placement of ships 
-bool placeCheck(int mas[11][11], int x, int y, int dir, int ship[], int sizeShip) {
-	if (x == 0 || y == 0)
-		return false;
-	if (dir == 1 && x + sizeShip > 11)
-		return false;
-	else
-		if (dir == 0 && y + sizeShip > 11)
-			return false;
-	if (mas[x][y] != 0 ||
-		mas[x - 1][y] != 0 ||
-		mas[x + 1][y] != 0 ||
-		mas[x][y - 1] != 0 ||
-		mas[x][y + 1] != 0 ||
-		mas[x - 1][y - 1] != 0 ||
-		mas[x + 1][y + 1] != 0 ||
-		mas[x - 1][y + 1] != 0 ||
-		mas[x + 1][y - 1] != 0 ||
-		mas[x - 1][y] != 0)
-		return false;
-	if (dir == 1)
-		x += (sizeShip - 1);
-	else
-		if (dir == 0)
-			y += (sizeShip - 1);
-	if (mas[x][y] != 0 ||
-		mas[x - 1][y] != 0 ||
-		mas[x + 1][y] != 0 ||
-		mas[x][y - 1] != 0 ||
-		mas[x][y + 1] != 0 ||
-		mas[x - 1][y - 1] != 0 ||
-		mas[x + 1][y + 1] != 0 ||
-		mas[x - 1][y + 1] != 0 ||
-		mas[x + 1][y - 1] != 0 ||
-		mas[x - 1][y] != 0)
-		return false;
-
-	return true;
-}
-// Shots
-bool shot(int mas[11][11], int x, int y) {
-	if (mas[x][y] == 4 || mas[x][y] == 3 || mas[x][y] == 2 || mas[x][y] == 1) {
-		mas[x][y] = 9;
-		cout << "\n***YOU HIT THE BULL'S-EYE***\n\nTRY AGAIN:\n";
-		return true;
-	}
-	else
-		if (mas[x][y] == 0) {
-			mas[x][y] = 8;
-			cout << "\n~~~OOPS, NOT LUCK~~~\n\nTRY NEXT TIME.\n";
-			return false;
-		}
-
-		else
-			if (mas[x][y] == 8 || mas[x][y] == 9) // Cancels the shot if the shot is fired at a cell where it has already been fired.
-				return true;
-}
-//Cheking whether four-deck ship has been sunk
-string sunkAC(int mas[11][11]) {
-	int count = 0;
-	for (int i = 1; i < 11; i++) {
-		for (int j = 1; j < 11; j++)
-			if (mas[i][j] == 4)
-				count++;
-
-	}
-	if (count == 0)
-		return "THE SHIP IS FLOODED!";
-	return "1";
-}
-// Counting and checking of three-deck ships
-string sunkCR(int mas[11][11]) {
-	int count = 0;
-	for (int i = 1; i < 11; i++) {
-		for (int j = 1; j < 11; j++)
-			if (mas[i][j] == 3)
-				count++;
-
-	}
-	if (count == 6 || count > 3)
-		return "2";
-	if (count == 3 || count > 0)
-		return "1";
-	if (count == 0)
-		return "ALL THE SHIPS ARE FLOODED!";
-}
-// Counting and checking of doble-deck ships
-string sunkDES(int mas[11][11]) {
-	int count = 0;
-	for (int i = 1; i < 11; i++) {
-		for (int j = 1; j < 11; j++)
-			if (mas[i][j] == 2)
-				count++;
-
-	}
-	if (count == 6 || count == 5)
-		return "3";
-	if (count == 4 || count == 3)
-		return "2";
-	if (count == 2 || count == 1)
-		return "1";
-	if (count == 0)
-		return "ALL THE SHIPS ARE FLOODED!";
-}
-// Counting and checking of single-deck ships
-string sunkSUB(int mas[11][11]) {
-	int count = 0;
-	for (int i = 1; i < 11; i++) {
-		for (int j = 1; j < 11; j++)
-			if (mas[i][j] == 1)
-				count++;
-
-	}
-	if (count == 4)
-		return "4";
-	if (count == 3)
-		return "3";
-	if (count == 2)
-		return "2";
-	if (count == 1)
-		return "1";
-	if (count == 0)
-		return "ALL THE SHIPS ARE FLOODED!";
-}
-// Check for victory
-bool victoryCheck(int mas[11][11]) {
-	for (int i = 1; i < 11; i++) {
-		for (int j = 1; j < 11; j++)
-			if (mas[i][j] == 4 || mas[i][j] == 3 || mas[i][j] == 2 || mas[i][j] == 1)
-				return false;
-	}
-	return true;
-}
-// THE END
-void theEnd() { // Вывод названия игры (заставка).
-	cout << "@@@@@@@  @   @  @@@@@      @@@@@  @    @  @@@@    @\n";
-	cout << "@  @  @  @   @  @   @      @   @  @    @  @   @   @\n";
-	cout << "   @     @   @  @          @      @@   @  @    @  @\n";
-	cout << "   @     @@@@@  @@@@       @@@@   @ @  @  @    @  @\n";
-	cout << "   @     @   @  @          @      @  @ @  @    @  @\n";
-	cout << "   @     @   @  @   @      @   @  @   @@  @   @    \n";
-	cout << "   @     @   @  @@@@@      @@@@@  @    @  @@@@    @\n";
-	cout << "\n\n\t    PRESS ANY KEY TO CLOSE...\n";
-}
 
 int main() {
 	srand(time(NULL));
@@ -330,7 +30,7 @@ int main() {
 
 	short direction = 3;
 	char coordX;
-	short  coordY;
+	short  coordY = 0;
 	short countShips = 0, sumS = 1, sw = 0; //countShips - 
 	int const size = 11, ac = 4, cr = 3, des = 2, sub = 1;
 	int aircraftCarrier[ac] = { 4, 4, 4, 4 }, cruiser[cr] = { 3, 3, 3 }, destroyer[des] = { 2, 2 }, submarine[sub] = { 1 };
@@ -342,7 +42,7 @@ int main() {
 		cout << "1. PLACEMENT IN AUTOMATIC MODE.\n";
 		cout << "2. PLACEMENT IN HAND MODE.\n";
 		cout << "3. ESCAPE.\n\n";
-		cout << "INPUT: ";
+		cout << "INPUT:";
 		cin >> sw;
 
 		switch (sw) {
@@ -623,7 +323,7 @@ int main() {
 
 	showField(field);
 	showFieldEnemy(enemyField);
-
+	
 	switch (turn) {
     // user's move
 	case 1:
@@ -631,7 +331,7 @@ int main() {
 			n = false;
 			do {
 				if (victoryCheck(enemyField) == true) {
-					cout << "YEAH, DUDE. YEAH YOU ARE A REAL MAN:)\n      !!!YOU WON!!!\n\n";
+					cout << "YEAH, DUDE. YEAH YOU ARE A REAL MAN :)\n      !!!YOU WON!!!\n\n";
 					system("pause");
 					break;
 				}
@@ -657,14 +357,14 @@ int main() {
 				showFieldEnemy(enemyField);
 			} while (n == false);
 			if (victoryCheck(enemyField) == true) 
-				break;
+				break; 
 
     // bot's move
 	case 2:
 			n = false;
 			do {
 				if (victoryCheck(field) == true) {
-					cout << "WELL, WELL, WELL, HOW DID YOU MAKE SUCH A MISTAKE:(\n      !!!BOT WON!!!\n\n";
+					cout << "WELL, WELL, WELL, HOW DID YOU MAKE SUCH A MISTAKE :(\n      !!!BOT WON!!!\n\n";
 					system("pause");
 					break;
 				}
@@ -694,6 +394,8 @@ int main() {
 				break;
 		} while (true);
 	}
+	system("pause");
+	system("cls");
 	// the end
 	n = false;
 	while (!n) {
